@@ -5,16 +5,18 @@ const { START_DATE } = require('./src/config');
 
 const COOKIE_FILE = 'cookies.json';
 
+// 패턴 기반 정규식
+const POST_URL_REGEX = /\/(p|reel|tv)\//;
+
 async function getRecentPostLinks(username) {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
-  // 쿠키 로드
   const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE));
   await page.setCookie(...cookies);
 
   await page.goto(`https://www.instagram.com/${username}/`, { waitUntil: 'networkidle2' });
-  await page.screenshot({ path: 'into-target.png', fullPage: true });
+  // await page.screenshot({ path: 'into-target.png', fullPage: true });
 
   await autoScrollUntilLinks(page, 10);
 
@@ -50,12 +52,10 @@ async function getRecentPostLinks(username) {
 async function extractPostLinks(page) {
   let links = [];
 
-  // 구조 기반 셀렉터 우선 시도
+  // 1차 구조 기반 셀렉터
   links = await page.evaluate(() => {
     const anchors = Array.from(document.querySelectorAll('article a[role="link"]'));
-    return anchors
-      .map((a) => a.href)
-      .filter((href) => href.match(/\/(p|reel|tv)\//));
+    return anchors.map((a) => a.href).filter((href) => href.match(/\/(p|reel|tv)\//));
   });
 
   console.log(`🔎 구조 기반 셀렉터 수집 개수: ${links.length}`);
@@ -63,14 +63,25 @@ async function extractPostLinks(page) {
   if (links.length === 0) {
     console.log('⚠️ 구조 기반 셀렉터 실패 → fallback selector 동작');
 
+    // 2차 div 기반
     links = await page.evaluate(() => {
       const anchors = Array.from(document.querySelectorAll('div._ac7v a'));
-      return anchors
-        .map((a) => a.href)
-        .filter((href) => href.match(/\/(p|reel|tv)\//));
+      return anchors.map((a) => a.href).filter((href) => href.match(/\/(p|reel|tv)\//));
     });
 
     console.log(`🌀 fallback 셀렉터 수집 개수: ${links.length}`);
+  }
+
+  if (links.length === 0) {
+    console.log('⚠️ fallback 실패 → 전역 셀렉터 동작');
+
+    // 3차 최후의 전역 a 태그
+    links = await page.evaluate(() => {
+      const anchors = Array.from(document.querySelectorAll('a'));
+      return anchors.map((a) => a.href).filter((href) => href.match(/\/(p|reel|tv)\//));
+    });
+
+    console.log(`🚨 전역 셀렉터 수집 개수: ${links.length}`);
   }
 
   return links;
@@ -85,7 +96,7 @@ async function autoScrollUntilLinks(page, min = 10) {
 
       const timer = setInterval(() => {
         const anchors = [...document.querySelectorAll('a')];
-        const postLinks = anchors.map((a) => a.href).filter((href) => href.includes('/p/') || href.includes('/reel/'));
+        const postLinks = anchors.map((a) => a.href).filter((href) => href.match(/\/(p|reel|tv)\//));
         const unique = [...new Set(postLinks)];
 
         window.scrollBy(0, distance);
