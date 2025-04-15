@@ -1,19 +1,30 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const { START_DATE } = require('../config');
 const { isNewerThan } = require('../utils/dateUtils');
 const { autoScrollUntilLinks } = require('../utils/autoScroll');
 
+puppeteer.use(StealthPlugin());
+
+
 async function getRecentPostLinks(username) {
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+    ],
+  });
   const page = await browser.newPage();
 
-  await page.goto(`https://www.instagram.com/${username}/`, { waitUntil: 'networkidle2' });
+  await page.setUserAgent(
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  );
 
   await page.setViewport({ width: 1280, height: 800 });
 
-await page.setUserAgent(
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-);
+  await page.goto(`https://www.instagram.com/${username}/`, { waitUntil: 'networkidle2' });
+
 
   // 🔁 최신 게시물 10개가 모일 때까지 스크롤
   console.log('🌀 최신 게시물 10개가 수집될 때까지 스크롤 중...');
