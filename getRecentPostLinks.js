@@ -54,7 +54,7 @@ async function extractPostLinks(page) {
 
   // 1차 구조 기반 셀렉터
   links = await page.evaluate(() => {
-    const anchors = Array.from(document.querySelectorAll('article a[role="link"]'));
+    const anchors = Array.from(document.querySelectorAll('a[role="link"]'));
     return anchors.map((a) => a.href).filter((href) => href.match(/\/(p|reel|tv)\//));
   });
 
