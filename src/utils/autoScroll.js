@@ -1,7 +1,6 @@
-// src/utils/autoScroll.js
-async function autoScrollUntilLinks(page, minPostCount = 10) {
+async function autoScrollUntilLinks(page, min = 10) {
   await page.evaluate(async (minPostCount) => {
-    return new Promise((resolve) => {
+    await new Promise((resolve) => {
       let totalHeight = 0;
       const distance = 1000;
       let tries = 0;
@@ -10,22 +9,20 @@ async function autoScrollUntilLinks(page, minPostCount = 10) {
         const anchors = [...document.querySelectorAll('a')];
         const postLinks = anchors
           .map((a) => a.href)
-          .filter((href) => href.includes('/p/'));
-        const uniqueLinks = [...new Set(postLinks)];
-
-        console.log(`📸 현재 수집된 게시글 수: ${uniqueLinks.length}`);
+          .filter((href) => href.match(/\/(p|reel|tv)\//));
+        const unique = [...new Set(postLinks)];
 
         window.scrollBy(0, distance);
         totalHeight += distance;
         tries++;
 
-        if (uniqueLinks.length >= minPostCount || tries > 30) {
+        if (unique.length >= minPostCount || tries > 30) {
           clearInterval(timer);
           resolve();
         }
       }, 500);
     });
-  }, minPostCount);
+  }, min);
 }
 
 module.exports = { autoScrollUntilLinks };

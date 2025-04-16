@@ -1,35 +1,25 @@
 const cron = require('node-cron');
-const { getRecentPostLinks } = require('../crawler/instagramScraper');
+const { getRecentPostLinks } = require('../crawler/getRecentPostLinks');
 const { sendEmail } = require('../email/mailer');
-const { INSTAGRAM_USERNAME, RECEIVER_EMAIL } = require('../config');
 
 function runDailyJob() {
   console.log('💡 Scheduling Daily Job...');
+  const username = process.env.TARGET_USERNAME;
 
   // cron.schedule('0 8 * * *', async () => {
   cron.schedule('* * * * *', async () => {
-    // console.log(`🚀 Running Crawling Job at ${new Date().toISOString()}`);
-    console.log(`테스트용 실행 시간: ${new Date().toISOString()}`);
+    console.log(`🚀 Running Crawling Job at ${new Date().toISOString()}`);
     try {
-      const links = await getRecentPostLinks(INSTAGRAM_USERNAME);
-      console.log(links);
+      const links = await getRecentPostLinks(username);
       if (links.length === 0) {
-        console.log('📭 No new posts found');
+        console.log('📭 새 게시물이 없습니다.');
         return;
       }
-
-      console.log(`📦 Found ${links.length} new posts`);
-
       const htmlContent = links
-        .map((l) => `<a href="${l}">${l}</a>`)
+        .map((link) => `<a href="${link}" target="_blank">${link}</a>`)
         .join('<br>');
-
-      await sendEmail(
-        `[InstaBot] 오늘의 새 게시물`,
-        htmlContent,
-        RECEIVER_EMAIL
-      );
-
+      const subject = `[InstaBot] ${username}의 새 게시물 ${links.length}건`;
+      await sendEmail(subject, htmlContent, process.env.EMAIL_RECEIVER);
       console.log('📬 Mail sent successfully');
     } catch (error) {
       console.error('Error in daily job:', error);
