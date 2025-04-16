@@ -32,4 +32,4 @@ async function loginAndSaveCookies() {
   await browser.close();
 }
 
-loginAndSaveCookies();
+module.exports = { loginAndSaveCookies };
