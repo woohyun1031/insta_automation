@@ -8,7 +8,9 @@ async function autoScrollUntilLinks(page, minPostCount = 10) {
 
       const timer = setInterval(() => {
         const anchors = [...document.querySelectorAll('a')];
-        const postLinks = anchors.map((a) => a.href).filter((href) => href.includes('/p/'));
+        const postLinks = anchors
+          .map((a) => a.href)
+          .filter((href) => href.includes('/p/'));
         const uniqueLinks = [...new Set(postLinks)];
 
         console.log(`📸 현재 수집된 게시글 수: ${uniqueLinks.length}`);

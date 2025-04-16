@@ -6,14 +6,10 @@ const { autoScrollUntilLinks } = require('../utils/autoScroll');
 
 puppeteer.use(StealthPlugin());
 
-
 async function getRecentPostLinks(username) {
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-    ],
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
 
@@ -23,23 +19,23 @@ async function getRecentPostLinks(username) {
 
   await page.setViewport({ width: 1280, height: 800 });
 
-  await page.goto(`https://www.instagram.com/${username}/`, { waitUntil: 'networkidle2' });
-
+  await page.goto(`https://www.instagram.com/${username}/`, {
+    waitUntil: 'networkidle2',
+  });
 
   // 🔁 최신 게시물 10개가 모일 때까지 스크롤
   console.log('🌀 최신 게시물 10개가 수집될 때까지 스크롤 중...');
   await autoScrollUntilLinks(page, 10);
-  
+
   await page.screenshot({ path: 'debug.png', fullPage: true });
 
   // 링크 수집
-  const links = await page.$$eval('a', (anchors) =>{
-      console.log(anchors)
-      return anchors
-        .map((a) => a.href)
-        .filter((href) => href.includes('/p/') || href.includes('/reel/'))
-    }
-  );
+  const links = await page.$$eval('a', (anchors) => {
+    console.log(anchors);
+    return anchors
+      .map((a) => a.href)
+      .filter((href) => href.includes('/p/') || href.includes('/reel/'));
+  });
   const uniqueLinks = [...new Set(links)];
 
   const postLinks = [];

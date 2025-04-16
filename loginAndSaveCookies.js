@@ -1,4 +1,3 @@
-
 // loginAndSaveCookies.js
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -10,10 +9,16 @@ async function loginAndSaveCookies() {
   const browser = await puppeteer.launch({ headless: false }); // 실제 눈으로 확인
   const page = await browser.newPage();
 
-  await page.goto('https://www.instagram.com/accounts/login/', { waitUntil: 'networkidle2' });
+  await page.goto('https://www.instagram.com/accounts/login/', {
+    waitUntil: 'networkidle2',
+  });
 
-  await page.type('input[name="username"]', process.env.INSTAGRAM_ID, { delay: 100 });
-  await page.type('input[name="password"]', process.env.INSTAGRAM_PW, { delay: 100 });
+  await page.type('input[name="username"]', process.env.INSTAGRAM_ID, {
+    delay: 100,
+  });
+  await page.type('input[name="password"]', process.env.INSTAGRAM_PW, {
+    delay: 100,
+  });
 
   await Promise.all([
     page.click('button[type="submit"]'),
