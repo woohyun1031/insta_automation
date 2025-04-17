@@ -12,7 +12,10 @@ const COOKIE_FILE = 'cookies.json';
 const POST_URL_REGEX = /\/(p|reel|tv)\//;
 
 async function getRecentPostLinks(username) {
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const page = await browser.newPage();
 
   const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE));

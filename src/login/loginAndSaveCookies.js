@@ -6,7 +6,10 @@ require('dotenv').config();
 const COOKIE_FILE = 'cookies.json';
 
 async function loginAndSaveCookies() {
-  const browser = await puppeteer.launch({ headless: false }); // 실제 눈으로 확인
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
   const page = await browser.newPage();
 
   await page.goto('https://www.instagram.com/accounts/login/', {
