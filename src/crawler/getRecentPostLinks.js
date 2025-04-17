@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const { isNewerThan } = require('../utils/dateUtils');
-const { START_DATE } = require('../config');
+// const { START_DATE } = require('../config');
+const { getYesterdayMidnightISO } = require('../utils/getYesterdayMidnightISO');
 const { autoScrollUntilLinks } = require('../utils/autoScroll');
 const { extractPostLinks } = require('../utils/extractPostLinks');
 
@@ -30,6 +31,9 @@ async function getRecentPostLinks(username) {
 
   const postLinks = [];
 
+  const startDate = getYesterdayMidnightISO();
+  console.log(`📅 기준 시점 (전날 00시): ${startDate}`);
+
   for (const link of uniqueLinks) {
     await page.goto(link, { waitUntil: 'networkidle2' });
 
@@ -38,7 +42,7 @@ async function getRecentPostLinks(username) {
         el.getAttribute('datetime')
       );
 
-      if (isNewerThan(datetime, START_DATE)) {
+      if (isNewerThan(datetime, startDate)) {
         console.log(`✅ 수집: ${link} (${datetime})`);
         postLinks.push(link);
       }
