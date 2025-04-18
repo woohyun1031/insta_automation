@@ -8,12 +8,12 @@ function runDailyJob() {
   console.log('💡 Scheduling Daily Job...');
   const username = process.env.TARGET_USERNAME;
 
-  cron.schedule(
-    '0 8 * * *',
-    async () => {
-  //     cron.schedule(
-  //       '*/2 * * * *',
-  //       async () => {
+      // cron.schedule(
+      //   '0 8 * * *',
+      //   async () => {
+      cron.schedule(
+        '* * * * *',
+        async () => {
       console.log(`🚀 Running Crawling Job at ${new Date().toISOString()}`);
       try {
         await loginAndSaveCookies(); // ✨ 로그인 & 쿠키 저장

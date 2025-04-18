@@ -45,23 +45,34 @@ async function getRecentPostLinks(username) {
   console.log(`📅 기준 시점 (전날 00시): ${startDate}`);
 
   for (const link of uniqueLinks) {
-    await page.goto(link, { waitUntil: 'networkidle2' });
-
     try {
-      await page.waitForSelector('time', { timeout: 5000 });
+      await page.goto(link, {
+        waitUntil: 'domcontentloaded',
+        timeout: 20000,
+      });
+      console.log(`🔗 게시물 접근: ${link}`);
 
-      const datetime = await page.$eval('time', (el) =>
-        el.getAttribute('datetime')
-      );
+      try {
+        await page.waitForSelector('time', { timeout: 5000 });
 
-      if (isNewerThan(datetime, startDate)) {
-        console.log(`✅ 수집: ${link} (${datetime})`);
-        postLinks.push(link);
+        const datetime = await page.$eval('time', (el) =>
+          el.getAttribute('datetime')
+        );
+
+        if (isNewerThan(datetime, startDate)) {
+          console.log(`✅ 수집: ${link} (${datetime})`);
+          postLinks.push(link);
+        } else {
+          console.log(`⏭️ 오래된 게시물 제외: ${link} (${datetime})`);
+        }
+      } catch (err) {
+        console.log(`⚠️ 시간 추출 실패: ${link}`);
       }
 
       if (postLinks.length >= 10) break;
     } catch (err) {
-      console.log(`⚠️ 시간 추출 실패: ${link}`);
+      console.log(`🚫 게시물 이동 실패 (timeout 등): ${link}`);
+      console.error(err.message);
     }
   }
 
