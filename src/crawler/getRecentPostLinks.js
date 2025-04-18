@@ -15,6 +15,7 @@ const POST_URL_REGEX = /\/(p|reel|tv)\//;
 
 async function getRecentPostLinks(username) {
   const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium-browser',
     headless: 'new',
     args: [
       '--no-sandbox',
