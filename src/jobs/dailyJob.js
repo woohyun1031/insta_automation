@@ -21,6 +21,7 @@ function runDailyJob() {
         const links = await getRecentPostLinks(username);
         if (links.length === 0) {
           console.log('📭 새 게시물이 없습니다.');
+          await logout(); // ✨ 로그아웃 처리
           return;
         }
         const htmlContent = `
