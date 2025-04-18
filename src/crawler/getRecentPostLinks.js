@@ -41,6 +41,8 @@ async function getRecentPostLinks(username) {
     await page.goto(link, { waitUntil: 'networkidle2' });
 
     try {
+      await page.waitForSelector('time', { timeout: 5000 });
+
       const datetime = await page.$eval('time', (el) =>
         el.getAttribute('datetime')
       );

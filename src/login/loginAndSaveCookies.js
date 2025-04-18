@@ -12,9 +12,16 @@ async function loginAndSaveCookies() {
   });
   const page = await browser.newPage();
 
+  await page.setViewport({ width: 1280, height: 800 });
   await page.goto('https://www.instagram.com/accounts/login/', {
     waitUntil: 'networkidle2',
   });
+
+  try {
+    await page.waitForSelector('input[name="username"]', { timeout: 8000 });
+  } catch (err) {
+    throw new Error('❌ 로그인 폼을 찾지 못했습니다. Instagram 측에서 봇을 차단했을 수 있습니다.');
+  }
 
   await page.type('input[name="username"]', process.env.INSTAGRAM_ID, {
     delay: 100,

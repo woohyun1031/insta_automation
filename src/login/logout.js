@@ -7,6 +7,7 @@ async function logout() {
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
   const page = await browser.newPage();
+  await page.setViewport({ width: 1280, height: 800 });
 
   const cookies = JSON.parse(fs.readFileSync('cookies.json'));
   await page.setCookie(...cookies);
