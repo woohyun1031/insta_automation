@@ -12,7 +12,7 @@ const COOKIE_FILE = 'cookies.json';
 
 async function loginAndSaveCookies() {
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
+    executablePath: '/opt/render/.cache/puppeteer/chrome/linux-135.0.7049.84/chrome-linux64/chrome',
     headless: 'new',
     args: [
       '--no-sandbox',
