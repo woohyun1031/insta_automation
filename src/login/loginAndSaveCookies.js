@@ -1,6 +1,8 @@
 // loginAndSaveCookies.js
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const axios = require('axios');
+
 const fs = require('fs');
 const dns = require('dns/promises');
 
@@ -31,7 +33,20 @@ async function loginAndSaveCookies() {
     console.log('✅ DNS 확인 완료');
   } catch (e) {
     console.error('❌ DNS 확인 실패');
+    process.exit(0);
     throw e;
+  }
+
+  const axios = require('axios');
+
+  try {
+    const res = await axios.get('https://www.instagram.com/accounts/login/', {
+      timeout: 8000,
+    });
+    console.log(`✅ Instagram 응답: ${res.status}`);
+  } catch (e) {
+    console.error('❌ Instagram 연결 실패:', e.message);
+    process.exit(0); // graceful exit
   }
 
   await page.goto('https://www.instagram.com/accounts/login/', {
