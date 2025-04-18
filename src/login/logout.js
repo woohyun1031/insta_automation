@@ -7,7 +7,12 @@ puppeteer.use(StealthPlugin());
 async function logout() {
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-gpu',
+      '--disable-dev-shm-usage'
+    ]
   });
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 800 });

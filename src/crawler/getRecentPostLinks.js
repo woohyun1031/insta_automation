@@ -16,7 +16,12 @@ const POST_URL_REGEX = /\/(p|reel|tv)\//;
 async function getRecentPostLinks(username) {
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-gpu',
+      '--disable-dev-shm-usage'
+    ]
   });
   const page = await browser.newPage();
 
