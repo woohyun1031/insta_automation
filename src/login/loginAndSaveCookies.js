@@ -32,7 +32,7 @@ async function loginAndSaveCookies() {
     console.log('✅ DNS 확인 완료');
   } catch (e) {
     console.error('❌ DNS 확인 실패');
-    process.exit(0);
+    // process.exit(0);
   }
 
   // 네트워크 체크
@@ -43,7 +43,7 @@ async function loginAndSaveCookies() {
     console.log(`✅ Instagram 응답: ${res.status}`);
   } catch (e) {
     console.error('❌ Instagram 연결 실패:', e.message);
-    process.exit(0);
+    // process.exit(0);
   }
 
   const loginURL = 'https://www.instagram.com/accounts/login/';
