@@ -11,6 +11,7 @@ puppeteer.use(StealthPlugin());
 const COOKIE_FILE = 'cookies.json';
 
 async function loginAndSaveCookies() {
+  console.log('🔑 Instagram 로그인 시작');
   const browser = await puppeteer.launch({
     headless: 'new',
     args: [
@@ -20,7 +21,7 @@ async function loginAndSaveCookies() {
       '--disable-dev-shm-usage',
     ],
   });
-
+  console.log('🌐 브라우저 시작');
   const page = await browser.newPage();
 
   console.log('👾 뷰포트 설정');
@@ -28,6 +29,7 @@ async function loginAndSaveCookies() {
 
   // DNS 체크
   try {
+    console.log('🔍 DNS 확인 중...');
     await dns.lookup('www.instagram.com');
     console.log('✅ DNS 확인 완료');
   } catch (e) {
@@ -37,6 +39,7 @@ async function loginAndSaveCookies() {
 
   // 네트워크 체크
   try {
+    console.log('🌐 Instagram 연결 확인 중...');
     const res = await axios.get('https://www.instagram.com/accounts/login/', {
       timeout: 8000,
     });
@@ -46,17 +49,18 @@ async function loginAndSaveCookies() {
     // process.exit(0);
   }
 
+
   const loginURL = 'https://www.instagram.com/accounts/login/';
   const maxAttempts = 3;
   let loginFormDetected = false;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
+      console.log(`🔄 로그인 페이지로 이동 시작... (시도 ${attempt})`);
       await page.goto(loginURL, {
         waitUntil: 'networkidle2',
         timeout: 20000,
       });
-
       console.log(`🍺 로그인 페이지로 이동 중... (시도 ${attempt})`);
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -84,9 +88,11 @@ async function loginAndSaveCookies() {
   if (!loginFormDetected) return;
 
   // 로그인 입력
+  console.log('🔑 로그인 정보 입력 중...');
   await page.type('input[name="username"]', process.env.INSTAGRAM_ID, { delay: 100 });
   await page.type('input[name="password"]', process.env.INSTAGRAM_PW, { delay: 100 });
 
+  console.log('🔑 로그인 버튼 클릭 중...');
   await Promise.all([
     page.click('button[type="submit"]'),
     page.waitForNavigation({ waitUntil: 'networkidle2' }),
@@ -97,6 +103,7 @@ async function loginAndSaveCookies() {
   console.log('✅ 로그인 성공, 쿠키 저장 완료');
 
   await browser.close();
+  console.log('🌐 브라우저 종료');
 }
 
 module.exports = { loginAndSaveCookies };

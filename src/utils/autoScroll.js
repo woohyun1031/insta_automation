@@ -25,7 +25,7 @@ async function autoScrollUntilLinks(page, min = 10) {
           clearInterval(timer);
 
           // ⏱️ DOM이 lazy load될 시간 살짝 더 주기
-          setTimeout(resolve, 1000); // 1초 대기
+          setTimeout(resolve, 2000); // 2초 대기
         }
       }, 800); // 스크롤 간격
     });

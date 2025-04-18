@@ -2,16 +2,12 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
 const { isNewerThan } = require('../utils/dateUtils');
-// const { START_DATE } = require('../config');
 const { getYesterdayMidnightISO } = require('../utils/getYesterdayMidnightISO');
 const { autoScrollUntilLinks } = require('../utils/autoScroll');
 const { extractPostLinks } = require('../utils/extractPostLinks');
 
 const COOKIE_FILE = 'cookies.json';
 puppeteer.use(StealthPlugin());
-
-// 패턴 기반 정규식
-const POST_URL_REGEX = /\/(p|reel|tv)\//;
 
 async function getRecentPostLinks(username) {
   const browser = await puppeteer.launch({
@@ -23,19 +19,26 @@ async function getRecentPostLinks(username) {
       '--disable-dev-shm-usage'
     ]
   });
+  console.log(`🌐 브라우저 시작: ${browser.process()?.pid}`);
   const page = await browser.newPage();
 
   const cookies = JSON.parse(fs.readFileSync(COOKIE_FILE));
+  if (!cookies || cookies.length === 0) {
+    console.log('⚠️ 쿠키 파일이 비어있거나 존재하지 않습니다. 로그인 후 쿠키를 저장하세요.');
+    await browser.close();
+    return [];
+  }
   await page.setCookie(...cookies);
 
   await page.goto(`https://www.instagram.com/${username}/`, {
     waitUntil: 'networkidle2',
   });
-  // await page.screenshot({ path: 'into-target.png', fullPage: true });
-
+  console.log(`🔍 ${username} 프로필 페이지 접근 완료`);
   await autoScrollUntilLinks(page, 10);
+  console.log('🔄 스크롤 완료');
 
   const links = await extractPostLinks(page);
+  console.log(`🔗 수집된 링크 개수: ${links.length}`);
 
   const uniqueLinks = [...new Set(links)];
 
