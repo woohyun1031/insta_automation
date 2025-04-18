@@ -2,6 +2,8 @@
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
+const dns = require('dns/promises');
+
 require('dotenv').config();
 
 puppeteer.use(StealthPlugin());
@@ -23,6 +25,15 @@ async function loginAndSaveCookies() {
 
   console.log(`👾 뷰포트 설정`);
   await page.setViewport({ width: 1280, height: 800 });
+
+  try {
+    await dns.lookup('www.instagram.com');
+    console.log('✅ DNS 확인 완료');
+  } catch (e) {
+    console.error('❌ DNS 확인 실패');
+    throw e;
+  }
+
   await page.goto('https://www.instagram.com/accounts/login/', {
     waitUntil: 'networkidle2',
   });
