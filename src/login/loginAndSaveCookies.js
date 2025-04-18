@@ -1,7 +1,10 @@
 // loginAndSaveCookies.js
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
 require('dotenv').config();
+
+puppeteer.use(StealthPlugin());
 
 const COOKIE_FILE = 'cookies.json';
 

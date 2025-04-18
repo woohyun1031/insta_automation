@@ -1,4 +1,5 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const fs = require('fs');
 const { isNewerThan } = require('../utils/dateUtils');
 // const { START_DATE } = require('../config');
@@ -7,6 +8,7 @@ const { autoScrollUntilLinks } = require('../utils/autoScroll');
 const { extractPostLinks } = require('../utils/extractPostLinks');
 
 const COOKIE_FILE = 'cookies.json';
+puppeteer.use(StealthPlugin());
 
 // 패턴 기반 정규식
 const POST_URL_REGEX = /\/(p|reel|tv)\//;
