@@ -19,8 +19,8 @@ A daily Instagram crawler that automatically collects recent posts from a target
 
 - [Node.js](https://nodejs.org/)
 - [Puppeteer](https://pptr.dev/)
-- [node-cron](https://www.npmjs.com/package/node-cron)
+- ~~[node-cron](https://www.npmjs.com/package/node-cron)~~
 - [nodemailer](https://nodemailer.com/about/)
-- [Railway](https://railway.app/) for deployment (optional)
+- [Render](https://render.com/) for deployment
 
 ---
