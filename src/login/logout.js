@@ -17,7 +17,7 @@ async function logout() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-gpu',
-      '--disable-dev-shm-usage'
+      // '--disable-dev-shm-usage'
     ]
   });
   console.log('🌐 브라우저 시작');
