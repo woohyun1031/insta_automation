@@ -1,7 +1,7 @@
 [phases.setup]
 aptPkgs = [
-  "chromium",
-  "chromium-driver",
+#  "chromium",
+#  "chromium-driver",
   "fonts-liberation",
   "libappindicator3-1",
   "libasound2",
